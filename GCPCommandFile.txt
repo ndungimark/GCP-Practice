@@ -1,0 +1,63 @@
+A.)Google Cloud Fundamentals:Getting Started with Compute Engine
+=============================================================
+Task 1: Creating two Virtual Machines
+-------------------------------------------------------------
+  1. List regions in our project
+     gcloud compute zones list | grep
+  2. List zones in GCP region us-central1
+     gcloud compute zones list | grep us-central1
+  3. From the list in step 2 set the default selected zone as below
+     gcloud config set compute/zone us-central1-b
+  4. Create the first VM instance in the zone us-central1-b (selected in step 3.)
+     gcloud compute instances create "Compute-vm-1" \
+	--machine-type "n1-standard-1" \
+	--image-project "debian-cloud" \
+	--image "debian-9-stretch-v20190213" \
+	--subnet "default"
+  5. Create the second VM instance in the zone us-central1-b (selected in step 3.)
+     gcloud compute instances create "Compute-vm-2" \
+	--machine-type "n1-standard-1" \
+	--image-project "debian-cloud" \
+	--image "debian-9-stretch-v20190213" \
+	--subnet "default"
+ 6.  ping Compute-vm-2 from  Compute-vm-1 SSH command line
+ 7.  CTRL+C to terminate the ping 
+ 8.  ssh into Compute-vm-1
+ 9.  Install Nginx into Compute-vm-1 from command line
+     sudo apt-get install nginx-light -y 
+ 10. Edit homepage to add custom image 
+     sudo nano /var/www/html/index.nginx-debian.html
+ 11.Run the command below to confirm the custom message Compute-vm-1
+    curl http://localhost/
+ 12.To confirm access of the webserver by Compute-vm-2 from the instance Compute-vm-1
+    run the below command from Compute-vm-2
+    curl http://Compute-vm-1/
+	
+	
+B.)Google Cloud Fundamentals: Getting Started with GKE
+====================================================
+Task 3: Start a Kubernetes Engine cluster
+-----------------------------------------------------
+1.Export your current zone into Environment Variable
+  export MY_ZONE=us-central1-a
+2.Start a Kubernetes cluster managed by Kubernetes Engine.Name the cluster webfrontend and configure it to run 2 nodes
+  gcloud container clusters create webfrontend --zone $MY_ZONE --num-nodes 2
+3.Check the Kubernetes Version
+  kubectl version
+4. List the compute nodes created in that particular zone
+   gcloud compute instances list --filter="us-central1-a"
+5.Launch a Nginx container 
+   kubectl create deploy nginx --image=nginx:1.17.10
+6.View the pod running the Nginx Container
+   kubectl get pods
+7.Expose the Nginx container to the internet
+   kubectl expose deployment nginx --port 80 --type LoadBalancer
+8.View the new service
+   kubectl get services
+9. Scale up the pods running your service
+   kubectl scale deployment nginx --replicas 3
+10.Confirm the replication at step 9 worked
+    kubectl get pods
+11. Confirm the external IP of the pods after replication has not changed.
+    kubectl get services
+   
